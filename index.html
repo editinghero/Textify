@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textify</title>
+    <style>
+        /* General Styles */
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;700&display=swap');
+
+        body {
+            font-family: 'SF Pro Display', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #ecf0f1;
+            overflow-x: hidden;
+            background: #1c1c1c; /* Blackish-grey background */
+        }
+
+        /* Fixed Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1); /* Translucent background */
+            backdrop-filter: blur(10px); /* Blur effect */
+            border-radius: 0 0 15px 15px; /* Rounded bottom corners */
+            z-index: 1000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ecf0f1;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px; /* Add spacing between buttons */
+        }
+
+        .header-buttons button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .header-buttons button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Notepad Container */
+        .notepad-container {
+            margin-top: 100px; /* Adjusted to avoid overlap with header */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .notepad-textarea {
+            width: 100%;
+            max-width: 600px;
+            min-height: 300px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            resize: vertical;
+            overflow-wrap: break-word;
+            transition: background 0.3s ease;
+        }
+
+        .notepad-textarea:focus {
+            background: rgba(255, 255, 255, 0.2);
+            outline: none; /* Remove default focus outline */
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* White glow effect */
+        }
+
+        /* Fixed Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1); /* Translucent background */
+            backdrop-filter: blur(10px); /* Blur effect */
+            
+            z-index: 1000;
+            padding: 10px 9px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 400;
+            color: #ecf0f1;
+        }
+
+        /* Share Popup */
+        .share-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .share-popup input {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            width: 100%;
+        }
+
+        .share-popup button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .share-popup button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Password Verification Popup */
+        .password-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .password-popup input {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            width: 100%;
+        }
+
+        .password-popup button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .password-popup button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Header -->
+    <header>
+        <h1>Textify</h1>
+        <div class="header-buttons">
+            <button id="save-btn">Save</button>
+            <button id="upload-btn">Upload</button>
+            <button id="share-btn">Share</button>
+        </div>
+    </header>
+
+    <!-- Notepad Container -->
+    <div class="notepad-container">
+        <textarea class="notepad-textarea" id="notepad-textarea" placeholder="Start typing here..."></textarea>
+    </div>
+
+    <!-- Fixed Footer -->
+    <footer>
+        Astral Quarks
+    </footer>
+
+    <!-- Share Popup -->
+    <div class="share-popup" id="share-popup">
+        <h3>Set Password for Shared Link</h3>
+        <input type="password" id="share-password" placeholder="Enter password">
+        <button id="share-confirm-btn">Confirm</button>
+        <button id="share-cancel-btn">Cancel</button>
+    </div>
+
+    <!-- Password Verification Popup -->
+    <div class="password-popup" id="password-popup">
+        <h3>Enter Password</h3>
+        <input type="password" id="password-input" placeholder="Enter password">
+        <button id="password-confirm-btn">Confirm</button>
+    </div>
+
+    <script>
+        let noteContent = '';
+
+        // Simple XOR-based encryption/decryption function
+        function xorEncryptDecrypt(input, key) {
+            let output = '';
+            for (let i = 0; i < input.length; i++) {
+                output += String.fromCharCode(input.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+            }
+            return output;
+        }
+
+        // Load note from localStorage on page load
+        window.addEventListener('load', () => {
+            const savedNote = localStorage.getItem('note');
+            if (savedNote) {
+                noteContent = savedNote;
+                document.getElementById('notepad-textarea').value = noteContent;
+            }
+
+            // Check for shared note in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const encryptedNote = urlParams.get('note');
+            const encryptedPassword = urlParams.get('password');
+
+            if (encryptedNote && encryptedPassword) {
+                const passwordPopup = document.getElementById('password-popup');
+                passwordPopup.style.display = 'flex';
+
+                document.getElementById('password-confirm-btn').addEventListener('click', () => {
+                    const enteredPassword = document.getElementById('password-input').value.trim();
+                    try {
+                        const decryptedPassword = xorEncryptDecrypt(decodeURIComponent(encryptedPassword), 'secretKey'); // Decrypt password
+                        if (enteredPassword === decryptedPassword) {
+                            const decryptedNote = xorEncryptDecrypt(decodeURIComponent(encryptedNote), 'secretKey'); // Decrypt note
+                            noteContent = decryptedNote;
+                            document.getElementById('notepad-textarea').value = noteContent;
+                            passwordPopup.style.display = 'none';
+                        } else {
+                            alert('Incorrect password!');
+                        }
+                    } catch (error) {
+                        alert('Invalid shared note');
+                    }
+                });
+            }
+        });
+
+        // Save note to localStorage
+        function saveNoteToLocalStorage() {
+            noteContent = document.getElementById('notepad-textarea').value;
+            localStorage.setItem('note', noteContent);
+        }
+
+        // Save note to a TXT file
+        document.getElementById('save-btn').addEventListener('click', () => {
+            const blob = new Blob([noteContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'note.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Upload and load note from a TXT file
+        document.getElementById('upload-btn').addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.txt';
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        noteContent = e.target.result;
+                        document.getElementById('notepad-textarea').value = noteContent;
+                        saveNoteToLocalStorage();
+                    } catch (error) {
+                        alert('Invalid TXT file');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        });
+
+        // Share Note with Password Protection
+        document.getElementById('share-btn').addEventListener('click', () => {
+            const sharePopup = document.getElementById('share-popup');
+            sharePopup.style.display = 'flex';
+        });
+
+        document.getElementById('share-cancel-btn').addEventListener('click', () => {
+            const sharePopup = document.getElementById('share-popup');
+            sharePopup.style.display = 'none';
+        });
+
+        document.getElementById('share-confirm-btn').addEventListener('click', () => {
+            const passwordInput = document.getElementById('share-password');
+            const password = passwordInput.value.trim();
+
+            if (password) {
+                noteContent = document.getElementById('notepad-textarea').value;
+
+                // Encrypt note and password
+                const encryptedNote = encodeURIComponent(xorEncryptDecrypt(noteContent, 'secretKey'));
+                const encryptedPassword = encodeURIComponent(xorEncryptDecrypt(password, 'secretKey'));
+
+                const shareUrl = `${window.location.origin}${window.location.pathname}?note=${encryptedNote}&password=${encryptedPassword}`;
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert('Shareable link copied to clipboard!');
+                }).catch(err => {
+                    alert('Failed to copy link. Please try again.');
+                });
+
+                passwordInput.value = '';
+                const sharePopup = document.getElementById('share-popup');
+                sharePopup.style.display = 'none';
+            } else {
+                alert('Please enter a password!');
+            }
+        });
+
+        // Auto-save note to localStorage when typing
+        document.getElementById('notepad-textarea').addEventListener('input', () => {
+            saveNoteToLocalStorage();
+        });
+    </script>
+
+</body>
+</html>
