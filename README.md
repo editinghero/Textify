@@ -1,4 +1,6 @@
 # Textify
+https://editinghero.github.io/Textify/
+
 Can Share txt without any hassle
 
 
